@@ -35,4 +35,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64 # 컴퓨터용, 라즈베리파이용 둘 다 만듦
           push: true
-          tags: k45734/cupsd:latest
+          tags: |
+            k45734/cupsd:latest
+            k45734/cupsd:${{ github.sha }}
