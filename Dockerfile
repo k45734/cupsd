@@ -73,22 +73,22 @@ RUN sed -i 's/Listen localhost:631/Listen 2631/' /etc/cups/cupsd.conf && \
 	echo "DefaultEncryption Never" >> /etc/cups/cupsd.conf
 
 #SANED SEVER SCAN
-RUN apk add --update --no-cache bash sane-saned sane-utils sane-backend-epson sane-backend-epson2 busybox-extras && \
-    echo "6566 stream tcp nowait root.root /usr/sbin/saned saned" >/etc/inetd.conf && \
-    addgroup saned lp
+#RUN apk add --update --no-cache bash sane-saned sane-utils sane-backend-epson sane-backend-epson2 busybox-extras && \
+#    echo "6566 stream tcp nowait root.root /usr/sbin/saned saned" >/etc/inetd.conf && \
+#    addgroup saned lp
 
-ADD https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework /pipework
+#ADD https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework /pipework
 
 # This will use port 6566-6570 SANE scanner
-EXPOSE 6566-6570
+#EXPOSE 6566-6570
 
-ENV DATA_PORT_RANGE="6567-6570" ALLOW_HOSTS="192.168.0.0/24 172.17.0.1/24"
-RUN sed -i 's/providers = provider_sect/ssl_conf = ssl_sect/' /etc/ssl/openssl.cnf  && \
-    sed -i'' -r -e "/ssl_conf = ssl_sect/a\[ssl_sect]" /etc/ssl/openssl.cnf  && \
-    sed -i'' -r -e "/\[ssl_sect\]/a\system_default = system_default_sect" /etc/ssl/openssl.cnf  && \
-    sed -i'' -r -e "/system_default = system_default_sect/a\[system_default_sect]" /etc/ssl/openssl.cnf  && \
-    sed -i'' -r -e "/\[system_default_sect\]/a\Options = UnsafeLegacyRenegotiation" /etc/ssl/openssl.cnf  && \
-    echo "ssl edit ok"
+#ENV DATA_PORT_RANGE="6567-6570" ALLOW_HOSTS="192.168.0.0/24 172.17.0.1/24"
+#RUN sed -i 's/providers = provider_sect/ssl_conf = ssl_sect/' /etc/ssl/openssl.cnf  && \
+#    sed -i'' -r -e "/ssl_conf = ssl_sect/a\[ssl_sect]" /etc/ssl/openssl.cnf  && \
+#    sed -i'' -r -e "/\[ssl_sect\]/a\system_default = system_default_sect" /etc/ssl/openssl.cnf  && \
+#    sed -i'' -r -e "/system_default = system_default_sect/a\[system_default_sect]" /etc/ssl/openssl.cnf  && \
+#    sed -i'' -r -e "/\[system_default_sect\]/a\Options = UnsafeLegacyRenegotiation" /etc/ssl/openssl.cnf  && \
+#    echo "ssl edit ok"
 HEALTHCHECK --interval=10s --timeout=3s CMD curl -f http://www.google.com || exit 1
 #LAST
 CMD ["/root/run_cups.sh"]
