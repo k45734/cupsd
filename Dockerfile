@@ -5,13 +5,14 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 저장소 설정: main 저장소를 반드시 제일 위에 추가해야 합니다.
+# 1. 모든 저장소를 edge 버전으로 통일 (main, community, testing)
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
-# 2. 패키지 설치: 이제 모든 기본 라이브러리(libX11, libcups 등)를 찾을 수 있습니다.
+# 2. 패키지 설치 (의존성 문제를 피하기 위해 apk update 후 실행)
 RUN apk update && apk add --no-cache \
+    python3 \
     cups \
     cups-libs \
     cups-client \
