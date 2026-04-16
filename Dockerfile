@@ -5,13 +5,14 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 모든 저장소를 edge 버전으로 통일 (main, community, testing)
+# 1. 저장소를 edge로 통일하되, 순서를 main -> community -> testing 순으로 강제합니다.
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
-# 2. 패키지 설치 (의존성 문제를 피하기 위해 apk update 후 실행)
+# 2. hplip 설치 시 발생하는 sane 의존성 문제를 해결하기 위해 필수 라이브러리를 먼저 명시합니다.
 RUN apk update && apk add --no-cache \
+    libxml2 \
     python3 \
     cups \
     cups-libs \
