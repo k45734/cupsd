@@ -5,13 +5,14 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 저장소 설정: 최신 패키지를 위해 edge를 사용하지만 hplip을 빼므로 main/community만으로 충분합니다.
+# 1. 저장소 설정 (Edge 버전으로 통일)
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
-# 2. CUPS와 Gutenprint 및 필수 도구만 설치
+# 2. CUPS, Gutenprint, 그리고 Python3를 포함한 패키지 설치
 RUN apk update && apk add --no-cache \
+    python3 \
     cups \
     cups-libs \
     cups-client \
