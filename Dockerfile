@@ -36,10 +36,9 @@ RUN echo "**** install Python ****" && \
     tzdata \
     curl \
     py3-pycups \
-    ##&& apk add hplip --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
     && rm -rf /var/cache/apk/*
 RUN apk add --update --no-cache cups-pdf --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
-#RUN apk add --update --no-cache hplip --repository=https://dl-cdn.alpinelinux.org/alpine/v3.20/community
+RUN apk add --update --no-cache hplip --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
 #TIMEZONE
 ENV TZ Asia/Seoul
 
