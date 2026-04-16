@@ -5,32 +5,19 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 먼저 필요한 edge 저장소들을 추가합니다.
+# 저장소 설정 (먼저 실행)
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 
-# 2. RUN 지시어를 사용하고, 역슬래시(\)로 줄을 정확히 연결합니다.
-RUN apk add --update --no-cache \
-    cups \
-    cups-libs \
-    cups-pdf \
-    cups-client \
-    cups-filters \
-    cups-dev \
-    gutenprint \
-    gutenprint-libs \
-    gutenprint-doc \
-    gutenprint-cups \
-    ghostscript \
-    epson-inkjet-printer-escpr \
-    brlaser \
-    hplip \
-    avahi \
-    inotify-tools \
-    rsync \
-    tzdata \
-    curl \
-    py3-pycups && \
+# 1차 설치: 기본 CUPS 및 도구
+RUN apk add --no-cache \
+    cups cups-libs cups-pdf cups-client cups-filters cups-dev \
+    avahi inotify-tools rsync tzdata curl py3-pycups
+
+# 2차 설치: 무거운 프린터 드라이버 (여기서 부하가 많이 발생함)
+RUN apk add --no-cache \
+    gutenprint gutenprint-libs gutenprint-doc gutenprint-cups \
+    ghostscript epson-inkjet-printer-escpr brlaser hplip && \
     rm -rf /var/cache/apk/*
 #TIMEZONE
 ENV TZ Asia/Seoul
