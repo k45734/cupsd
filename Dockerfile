@@ -11,8 +11,10 @@ RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposi
 
 # 1차 설치: 기본 CUPS 및 도구
 RUN apk add --no-cache \
+    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     cups cups-libs cups-pdf cups-client cups-filters cups-dev \
-    avahi inotify-tools rsync tzdata curl py3-pycups
+    hplip avahi inotify-tools rsync tzdata curl py3-pycups
 
 # 2차 설치: 무거운 프린터 드라이버 (여기서 부하가 많이 발생함)
 RUN apk add --no-cache \
