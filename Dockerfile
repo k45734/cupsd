@@ -5,21 +5,33 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 저장소 설정 (먼저 실행)
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+# 1. 저장소 설정: 최신(latest)과 개발판(edge)을 명확히 구분하여 등록
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/main" > /etc/apk/repositories && \
+    echo "https://dl-cdn.alpinelinux.org/alpine/latest-stable/community" >> /etc/apk/repositories && \
+    echo "@edge-testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    echo "@edge-community https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 
-# 1차 설치: 기본 CUPS 및 도구
-RUN apk add --no-cache \
-    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    cups cups-libs cups-pdf cups-client cups-filters cups-dev \
-    hplip avahi inotify-tools rsync tzdata curl py3-pycups
-
-# 2차 설치: 무거운 프린터 드라이버 (여기서 부하가 많이 발생함)
-RUN apk add --no-cache \
-    gutenprint gutenprint-libs gutenprint-doc gutenprint-cups \
-    ghostscript epson-inkjet-printer-escpr brlaser hplip && \
+# 2. 패키지 설치: 일반 패키지는 최신 안정판에서, 특정 패키지는 edge에서 가져옴
+RUN apk update && apk add --no-cache \
+    cups \
+    cups-libs \
+    cups-client \
+    cups-filters \
+    cups-dev \
+    avahi \
+    inotify-tools \
+    rsync \
+    tzdata \
+    curl \
+    py3-pycups \
+    gutenprint \
+    gutenprint-libs \
+    ghostscript \
+    epson-inkjet-printer-escpr \
+    brlaser \
+    # @태그를 붙여서 특정 저장소에서 가져오도록 명시
+    cups-pdf@edge-testing \
+    hplip@edge-community && \
     rm -rf /var/cache/apk/*
 #TIMEZONE
 ENV TZ Asia/Seoul
