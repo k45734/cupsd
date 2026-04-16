@@ -15,10 +15,11 @@ RUN echo "**** install Python ****" && \
     pip3 install --no-cache --upgrade pip setuptools wheel && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
     echo "**** install cron ****" && \
-    #echo -e "http://nl.alpinelinux.org/alpine/edge/testing\nhttp://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &&\
+    RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+	    echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
     apk add --update --no-cache cups \
     cups-libs \
-    #cups-pdf \
+    cups-pdf \
     cups-client \
     cups-filters \
     cups-dev \
@@ -29,17 +30,14 @@ RUN echo "**** install Python ****" && \
     ghostscript \
     epson-inkjet-printer-escpr \
     brlaser  \
-    #hplip  \
+    hplip  \
     avahi \
     inotify-tools \
     rsync \
     tzdata \
     curl \
     py3-pycups \
-    ##&& apk add hplip --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
     && rm -rf /var/cache/apk/*
-RUN apk add --update --no-cache cups-pdf --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
-RUN apk add --update --no-cache hplip --repository=https://dl-cdn.alpinelinux.org/alpine/v3.20/community
 #TIMEZONE
 ENV TZ Asia/Seoul
 
