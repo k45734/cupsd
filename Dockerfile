@@ -5,29 +5,41 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 저장소 설정 및 패키지 설치를 하나의 레이어에서 처리
-RUN apk update && \
-    apk add --no-cache \
-    python3 \
-    libxml2 \
-    cups \
+RUN echo "**** install Python ****" && \
+    apk add --update --no-cache python3-dev && \
+    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
+    echo "**** install pip ****" && \
+    python3 -m venv --system-site-packages /usr/local && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --no-cache --upgrade pip setuptools wheel && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    echo "**** install cron ****" && \
+    #echo -e "http://nl.alpinelinux.org/alpine/edge/testing\nhttp://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &&\
+    apk add --update --no-cache cups \
     cups-libs \
+    #cups-pdf \
     cups-client \
     cups-filters \
     cups-dev \
-    cups-pdf \
     gutenprint \
     gutenprint-libs \
+    gutenprint-doc \
     gutenprint-cups \
     ghostscript \
+    epson-inkjet-printer-escpr \
+    brlaser  \
+    #hplip  \
     avahi \
     inotify-tools \
     rsync \
     tzdata \
-    curl && \
-    # 파이썬 링크 설정 (필요 시)
-    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
-    rm -rf /var/cache/apk/*
+    curl \
+    py3-pycups \
+    ##&& apk add hplip --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+    && rm -rf /var/cache/apk/*
+RUN apk add --update --no-cache cups-pdf --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+RUN apk add --update --no-cache hplip --repository=https://dl-cdn.alpinelinux.org/alpine/v3.20/community
 #TIMEZONE
 ENV TZ Asia/Seoul
 
