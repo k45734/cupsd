@@ -6,10 +6,7 @@ ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
 # 저장소 설정 및 패키지 설치를 하나의 레이어에서 처리
-RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
-    echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-    apk update && \
+RUN apk update && \
     apk add --no-cache \
     python3 \
     libxml2 \
