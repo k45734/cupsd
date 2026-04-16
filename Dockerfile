@@ -5,33 +5,28 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 저장소를 edge로 통일하되, 순서를 main -> community -> testing 순으로 강제합니다.
+# 1. 저장소 설정: 최신 패키지를 위해 edge를 사용하지만 hplip을 빼므로 main/community만으로 충분합니다.
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
-# 2. hplip 설치 시 발생하는 sane 의존성 문제를 해결하기 위해 필수 라이브러리를 먼저 명시합니다.
+# 2. CUPS와 Gutenprint 및 필수 도구만 설치
 RUN apk update && apk add --no-cache \
-    libxml2 \
-    python3 \
     cups \
     cups-libs \
     cups-client \
     cups-filters \
     cups-dev \
     cups-pdf \
-    hplip \
+    gutenprint \
+    gutenprint-libs \
+    gutenprint-cups \
+    ghostscript \
     avahi \
     inotify-tools \
     rsync \
     tzdata \
-    curl \
-    py3-pycups \
-    gutenprint \
-    gutenprint-libs \
-    ghostscript \
-    epson-inkjet-printer-escpr \
-    brlaser && \
+    curl && \
     rm -rf /var/cache/apk/*
 #TIMEZONE
 ENV TZ Asia/Seoul
