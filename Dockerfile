@@ -5,19 +5,13 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-RUN echo "**** install Python ****" && \
-    apk add --update --no-cache python3-dev && \
-    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
-    echo "**** install pip ****" && \
-    python3 -m venv --system-site-packages /usr/local && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --no-cache --upgrade pip setuptools wheel && \
-    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    echo "**** install cron ****" && \
-    RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-	    echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-    apk add --update --no-cache cups \
+# 1. 먼저 필요한 edge 저장소들을 추가합니다.
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+
+# 2. RUN 지시어를 사용하고, 역슬래시(\)로 줄을 정확히 연결합니다.
+RUN apk add --update --no-cache \
+    cups \
     cups-libs \
     cups-pdf \
     cups-client \
@@ -29,15 +23,15 @@ RUN echo "**** install Python ****" && \
     gutenprint-cups \
     ghostscript \
     epson-inkjet-printer-escpr \
-    brlaser  \
-    hplip  \
+    brlaser \
+    hplip \
     avahi \
     inotify-tools \
     rsync \
     tzdata \
     curl \
-    py3-pycups \
-    && rm -rf /var/cache/apk/*
+    py3-pycups && \
+    rm -rf /var/cache/apk/*
 #TIMEZONE
 ENV TZ Asia/Seoul
 
