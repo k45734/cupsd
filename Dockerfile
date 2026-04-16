@@ -5,15 +5,12 @@ RUN cat '/etc/os-release' && sleep 10
 ENV PYTHONUNBUFFERED=1
 RUN set -x \
 
-# 1. 기존의 모든 저장소 설정을 완전히 밀어버리고 다시 씁니다.
-# '>>' 가 아니라 '>' 를 첫 줄에 사용하여 기존 내용을 삭제하는 것이 핵심입니다.
+# 저장소 설정 및 패키지 설치를 하나의 레이어에서 처리
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-
-# 2. 업데이트 후 패키지 설치
-# libxml2는 python3와 ghostscript의 의존성을 위해 명시적으로 넣어주는 것이 안전합니다.
-RUN apk update && apk add --no-cache \
+    echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache \
     python3 \
     libxml2 \
     cups \
@@ -31,6 +28,8 @@ RUN apk update && apk add --no-cache \
     rsync \
     tzdata \
     curl && \
+    # 파이썬 링크 설정 (필요 시)
+    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
     rm -rf /var/cache/apk/*
 #TIMEZONE
 ENV TZ Asia/Seoul
